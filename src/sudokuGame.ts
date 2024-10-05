@@ -38,9 +38,11 @@ export class SudokuGame {
         buttonContainer.style.marginTop = '20px';
 
         const newGameButton = this.createStyledButton('New Game', () => this.newGame());
+        const clearGameButton = this.createStyledButton('Clear Game', () => this.clearGame());
         const solveGameButton = this.createStyledButton('Solve Game', () => this.solveGame());
 
         buttonContainer.appendChild(newGameButton);
+        buttonContainer.appendChild(clearGameButton);
         buttonContainer.appendChild(solveGameButton);
 
         document.body.appendChild(buttonContainer);
@@ -80,6 +82,7 @@ export class SudokuGame {
         this.solution = generator.generate();
         this.board = this.solution.map(row => row.map(cell => Math.random() < 0.5 ? cell : 0));
         this.initialBoard = this.board.map(row => [...row]);
+        this.selectedCell = null;
         this.render();
     }
 
@@ -207,6 +210,17 @@ export class SudokuGame {
             for (let col = 0; col < 9; col++) {
                 if (this.board[row][col] === 0) {
                     this.board[row][col] = this.solution[row][col];
+                }
+            }
+        }
+        this.render();
+    }
+
+    private clearGame(): void {
+        for (let row = 0; row < 9; row++) {
+            for (let col = 0; col < 9; col++) {
+                if (this.initialBoard[row][col] === 0) {
+                    this.board[row][col] = 0;
                 }
             }
         }
