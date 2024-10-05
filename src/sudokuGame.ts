@@ -1,4 +1,4 @@
-import { SudokuGenerator, generateSudoku } from './sudokuGenerator.js';
+import { SudokuGenerator } from './sudokuGenerator.js';
 
 export class SudokuGame {
     private board: number[][] = [];
@@ -8,10 +8,12 @@ export class SudokuGame {
     private cellSize: number = 50;
     private selectedCell: { row: number, col: number } | null = null;
     private initialBoard: number[][] = [];
+    private title: HTMLHeadingElement;
 
     constructor() {
-        // Use generateSudoku here if needed
-        const puzzle = generateSudoku();
+        this.title = document.createElement('h1');
+        this.title.textContent = 'Sudoku AI';
+        document.body.prepend(this.title);
         this.canvas = document.createElement('canvas');
         this.canvas.width = 450;
         this.canvas.height = 450;
@@ -29,10 +31,17 @@ export class SudokuGame {
         this.newGame();
     }
 
+    private createTitle() {
+        this.title = document.createElement('h1');
+        this.title.textContent = 'Sudoku AI';
+        document.body.appendChild(this.title);
+    }
+
     private createNewGameButton() {
         const button = document.createElement('button');
         button.textContent = 'New Game';
         button.addEventListener('click', () => this.newGame());
+        button.className = 'new-game-button';
         document.body.appendChild(button);
     }
 
@@ -159,5 +168,12 @@ export class SudokuGame {
                 }
             }
         }
+    }
+
+    private centerContent() {
+        const windowHeight = window.innerHeight;
+        const contentHeight = this.title.offsetHeight + this.canvas.height + 100; // 100px for button and margins
+        const topMargin = Math.max(0, (windowHeight - contentHeight) / 2);
+        this.title.style.marginTop = `${topMargin}px`;
     }
 }
