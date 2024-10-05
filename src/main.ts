@@ -4,7 +4,7 @@ import { SudokuGenerator } from './sudokuGenerator';
 // Function to initialize the game
 function initGame() {
     const generator = new SudokuGenerator();
-    const game = new SudokuGame(generator.generate());
+    const game = new SudokuGame();
     
     // Add your game logic here
     console.log("Sudoku game initialized");

@@ -7,6 +7,7 @@ export class SudokuGame {
     private ctx: CanvasRenderingContext2D;
     private cellSize: number = 50;
     private selectedCell: { row: number, col: number } | null = null;
+    private initialBoard: number[][] = [];
 
     constructor() {
         // Use generateSudoku here if needed
@@ -44,13 +45,28 @@ export class SudokuGame {
         const generator = new SudokuGenerator();
         this.solution = generator.generate();
         this.board = this.solution.map(row => row.map(cell => Math.random() < 0.5 ? cell : 0));
+        this.initialBoard = this.board.map(row => [...row]);
         this.render();
     }
 
     private render() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.drawGrid();
+        this.drawHighlight();  // Add this line
         this.drawNumbers();
+    }
+
+    private drawHighlight() {
+        if (this.selectedCell) {
+            const { row, col } = this.selectedCell;
+            this.ctx.fillStyle = 'rgba(173, 216, 230, 0.5)';  // Light blue with 50% opacity
+            this.ctx.fillRect(
+                col * this.cellSize,
+                row * this.cellSize,
+                this.cellSize,
+                this.cellSize
+            );
+        }
     }
 
     private drawGrid() {
@@ -96,7 +112,13 @@ export class SudokuGame {
                 if (value !== 0) {
                     const x = (col + 0.5) * this.cellSize;
                     const y = (row + 0.5) * this.cellSize;
-                    this.ctx.fillStyle = this.solution[row][col] === value ? 'black' : 'blue';
+                    if (this.initialBoard[row][col] === value) {
+                        this.ctx.fillStyle = 'black';
+                    } else if (this.solution[row][col] === value) {
+                        this.ctx.fillStyle = 'green';
+                    } else {
+                        this.ctx.fillStyle = 'red';
+                    }
                     this.ctx.fillText(value.toString(), x, y);
                 }
             }
@@ -112,7 +134,12 @@ export class SudokuGame {
         const row = Math.floor(y / this.cellSize);
 
         if (row >= 0 && row < 9 && col >= 0 && col < 9) {
-            this.selectedCell = { row, col };
+            if (this.selectedCell && this.selectedCell.row === row && this.selectedCell.col === col) {
+                // Deselect if clicking the same cell
+                this.selectedCell = null;
+            } else {
+                this.selectedCell = { row, col };
+            }
             this.render();
         }
     }
@@ -120,16 +147,17 @@ export class SudokuGame {
     private handleKeyPress(e: KeyboardEvent) {
         if (this.selectedCell) {
             const { row, col } = this.selectedCell;
-            if (e.key >= '1' && e.key <= '9') {
-                const value = parseInt(e.key);
-                if (this.solution[row][col] === value) {
+            // Check if the cell was initially empty
+            if (this.initialBoard[row][col] === 0) {
+                if (e.key >= '1' && e.key <= '9') {
+                    const value = parseInt(e.key);
                     this.board[row][col] = value;
                     this.render();
+                } else if (e.key === 'Backspace' || e.key === 'Delete') {
+                    this.board[row][col] = 0;
+                    this.render();
                 }
-            } else if (e.key === 'Backspace' || e.key === 'Delete') {
-                this.board[row][col] = 0;
-                this.render();
             }
         }
     }
-  }
+}
