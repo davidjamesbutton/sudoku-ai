@@ -25,24 +25,49 @@ export class SudokuGame {
         }
         this.ctx = context;
 
-        this.createNewGameButton();
+        this.createButtons();
         this.addEventListeners();
-
         this.newGame();
     }
 
-    private createTitle() {
-        this.title = document.createElement('h1');
-        this.title.textContent = 'Sudoku AI';
-        document.body.appendChild(this.title);
+    private createButtons() {
+        const buttonContainer = document.createElement('div');
+        buttonContainer.style.display = 'flex';
+        buttonContainer.style.justifyContent = 'center';
+        buttonContainer.style.gap = '10px';
+        buttonContainer.style.marginTop = '20px';
+
+        const newGameButton = this.createStyledButton('New Game', () => this.newGame());
+        const solveGameButton = this.createStyledButton('Solve Game', () => this.solveGame());
+
+        buttonContainer.appendChild(newGameButton);
+        buttonContainer.appendChild(solveGameButton);
+
+        document.body.appendChild(buttonContainer);
     }
 
-    private createNewGameButton() {
+    private createStyledButton(text: string, onClick: () => void): HTMLButtonElement {
         const button = document.createElement('button');
-        button.textContent = 'New Game';
-        button.addEventListener('click', () => this.newGame());
-        button.className = 'new-game-button';
-        document.body.appendChild(button);
+        button.textContent = text;
+        button.addEventListener('click', onClick);
+        button.style.padding = '10px 20px';
+        button.style.fontSize = '16px';
+        button.style.cursor = 'pointer';
+        button.style.backgroundColor = '#4CAF50';
+        button.style.color = 'white';
+        button.style.border = 'none';
+        button.style.borderRadius = '5px';
+        button.style.transition = 'background-color 0.3s';
+
+        button.addEventListener('mouseover', () => {
+            button.style.backgroundColor = '#45a049';
+        });
+
+        button.addEventListener('mouseout', () => {
+            button.style.backgroundColor = '#4CAF50';
+        });
+
+        return button;
     }
 
     private addEventListeners() {
@@ -175,5 +200,16 @@ export class SudokuGame {
         const contentHeight = this.title.offsetHeight + this.canvas.height + 100; // 100px for button and margins
         const topMargin = Math.max(0, (windowHeight - contentHeight) / 2);
         this.title.style.marginTop = `${topMargin}px`;
+    }
+
+    private solveGame(): void {
+        for (let row = 0; row < 9; row++) {
+            for (let col = 0; col < 9; col++) {
+                if (this.board[row][col] === 0) {
+                    this.board[row][col] = this.solution[row][col];
+                }
+            }
+        }
+        this.render();
     }
 }
