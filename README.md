@@ -2,6 +2,8 @@
 
 This project is a Sudoku game implemented entirely by prompting Cursor AI. It demonstrates the capabilities of AI-assisted coding and provides an interactive Sudoku experience for users.
 
+[Play the game here](https://davidjamesbutton.github.io/sudoku-ai/)
+
 ## Features
 
 - Interactive Sudoku game board
